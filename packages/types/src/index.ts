@@ -1,6 +1,8 @@
 import { z } from "zod";
 
-// Base Pagination Schema
+// ==========================================
+// Base API Envelope & Pagination
+// ==========================================
 export const PaginationQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
@@ -9,7 +11,6 @@ export const PaginationQuerySchema = z.object({
 });
 export type PaginationQuery = z.infer<typeof PaginationQuerySchema>;
 
-// Generic API Envelope
 export interface ApiResponse<T> {
   success: boolean;
   data?: T;
@@ -25,64 +26,112 @@ export interface ApiResponse<T> {
   };
 }
 
-// User Domain Schema
+// ==========================================
+// Task Domain Schemas & Types
+// ==========================================
+export const TaskPrioritySchema = z.enum(["low", "medium", "high", "urgent"]);
+export type TaskPriority = z.infer<typeof TaskPrioritySchema>;
+
+export const TaskStatusSchema = z.enum(["todo", "in_progress", "completed", "archived"]);
+export type TaskStatus = z.infer<typeof TaskStatusSchema>;
+
+export const SubtaskSchema = z.object({
+  id: z.string(),
+  taskId: z.string(),
+  title: z.string().min(1),
+  completed: z.boolean().default(false),
+  estimatedMinutes: z.number().int().positive().default(15),
+  createdAt: z.string().or(z.date())
+});
+export type Subtask = z.infer<typeof SubtaskSchema>;
+
+export const TaskSchema = z.object({
+  id: z.string(),
+  title: z.string().min(1, "Title is required"),
+  description: z.string().default(""),
+  priority: TaskPrioritySchema.default("medium"),
+  status: TaskStatusSchema.default("todo"),
+  category: z.string().default("General"),
+  dueDate: z.string().optional(),
+  estimatedMinutes: z.number().int().default(30),
+  isAiGenerated: z.boolean().default(false),
+  subtasks: z.array(SubtaskSchema).default([]),
+  createdAt: z.string().or(z.date()),
+  updatedAt: z.string().or(z.date())
+});
+export type Task = z.infer<typeof TaskSchema>;
+
+export const CreateTaskSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().optional().default(""),
+  priority: TaskPrioritySchema.optional().default("medium"),
+  status: TaskStatusSchema.optional().default("todo"),
+  category: z.string().optional().default("General"),
+  dueDate: z.string().optional(),
+  estimatedMinutes: z.number().int().optional().default(30),
+  isAiGenerated: z.boolean().optional().default(false),
+  subtasks: z
+    .array(
+      z.object({
+        title: z.string().min(1),
+        estimatedMinutes: z.number().int().optional().default(15)
+      })
+    )
+    .optional()
+    .default([])
+});
+export type CreateTaskInput = z.infer<typeof CreateTaskSchema>;
+
+export const UpdateTaskSchema = CreateTaskSchema.partial();
+export type UpdateTaskInput = z.infer<typeof UpdateTaskSchema>;
+
+export interface TaskStats {
+  total: number;
+  completed: number;
+  inProgress: number;
+  urgent: number;
+  aiGenerated: number;
+  completionRate: number;
+}
+
+// ==========================================
+// AI-Powered Task Feature Schemas
+// ==========================================
+export const AITaskBreakdownRequestSchema = z.object({
+  title: z.string().min(1, "Task description is required"),
+  context: z.string().optional(),
+  targetMinutes: z.number().optional()
+});
+export type AITaskBreakdownRequest = z.infer<typeof AITaskBreakdownRequestSchema>;
+
+export const AITaskBreakdownResponseSchema = z.object({
+  suggestedTitle: z.string(),
+  category: z.string(),
+  priority: TaskPrioritySchema,
+  estimatedMinutes: z.number(),
+  subtasks: z.array(
+    z.object({
+      title: z.string(),
+      estimatedMinutes: z.number()
+    })
+  ),
+  aiTip: z.string()
+});
+export type AITaskBreakdownResponse = z.infer<typeof AITaskBreakdownResponseSchema>;
+
+// ==========================================
+// User & Auth Schemas
+// ==========================================
 export const UserRoleSchema = z.enum(["admin", "member", "guest"]);
 export type UserRole = z.infer<typeof UserRoleSchema>;
 
 export const UserSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string(),
   email: z.string().email(),
   name: z.string().min(2),
   role: UserRoleSchema.default("member"),
-  avatarUrl: z.string().url().optional(),
-  createdAt: z.date(),
-  updatedAt: z.date()
+  avatarUrl: z.string().optional(),
+  createdAt: z.string().or(z.date()),
+  updatedAt: z.string().or(z.date())
 });
 export type User = z.infer<typeof UserSchema>;
-
-export const CreateUserSchema = UserSchema.pick({
-  email: true,
-  name: true,
-  role: true
-});
-export type CreateUserInput = z.infer<typeof CreateUserSchema>;
-
-// Auth Schemas
-export const LoginInputSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8)
-});
-export type LoginInput = z.infer<typeof LoginInputSchema>;
-
-export interface AuthSession {
-  token: string;
-  expiresAt: string;
-  user: User;
-}
-
-// AI Service Domain Schemas
-export const AIProviderSchema = z.enum(["google", "openai", "anthropic", "local"]);
-export type AIProvider = z.infer<typeof AIProviderSchema>;
-
-export const InferenceRequestSchema = z.object({
-  prompt: z.string().min(1),
-  provider: AIProviderSchema.default("google"),
-  model: z.string().default("gemini-2.5-flash"),
-  temperature: z.number().min(0).max(2).default(0.7),
-  maxTokens: z.number().int().positive().default(1024),
-  systemInstruction: z.string().optional()
-});
-export type InferenceRequest = z.infer<typeof InferenceRequestSchema>;
-
-export const InferenceResponseSchema = z.object({
-  id: z.string(),
-  content: z.string(),
-  model: z.string(),
-  provider: AIProviderSchema,
-  usage: z.object({
-    promptTokens: z.number(),
-    completionTokens: z.number(),
-    totalTokens: z.number()
-  })
-});
-export type InferenceResponse = z.infer<typeof InferenceResponseSchema>;

@@ -18,4 +18,5 @@ if (process.env.NODE_ENV !== "production") {
   globalThis.prismaGlobal = db;
 }
 
+export * from "./taskStore";
 export * from "@prisma/client";

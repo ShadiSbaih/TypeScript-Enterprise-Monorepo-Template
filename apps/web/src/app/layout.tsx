@@ -1,9 +1,10 @@
 import * as React from "react";
 import type { Metadata } from "next";
+import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Enterprise Monorepo Client",
-  description: "Production Next.js application template"
+  title: "OmniTask AI — Full-Stack Monorepo Task Manager",
+  description: "AI-powered task management, decomposition, and planning built on an enterprise TypeScript monorepo."
 };
 
 export default function RootLayout({
@@ -12,8 +13,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body style={{ margin: 0, fontFamily: "system-ui, -apple-system, sans-serif" }}>
+    <html lang="en" className="dark">
+      <body className="antialiased selection:bg-indigo-500 selection:text-white">
         {children}
       </body>
     </html>

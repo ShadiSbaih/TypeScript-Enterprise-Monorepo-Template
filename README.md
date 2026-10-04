@@ -91,6 +91,18 @@ A production-ready, full-stack TypeScript monorepo template built with **Turbore
 
 ---
 
+## Feature Showcase: OmniTask AI Manager
+
+This monorepo comes equipped with a **full-stack, AI-powered Task Manager** implemented across every package and service:
+
+- **Web Client ([apps/web](file:///c:/Users/shadi/Desktop/New%20folder/apps/web))**: Next.js 14 App Router with dark glassmorphic aesthetics, KPI metrics dashboard, filter tabs, interactive subtask checklists, and an AI Decomposition modal.
+- **Mobile Client ([apps/mobile](file:///c:/Users/shadi/Desktop/New%20folder/apps/mobile))**: React Native / Expo screen with quick task capture, offline state tracking, and priority tagging.
+- **Backend API ([apps/server](file:///c:/Users/shadi/Desktop/New%20folder/apps/server))**: Fastify REST endpoints (`/api/v1/tasks`, `/api/v1/tasks/stats`, toggle actions, and subtask mutations).
+- **AI Service ([apps/ai-service](file:///c:/Users/shadi/Desktop/New%20folder/apps/ai-service))**: Autonomous Task Decomposer (`POST /api/ai/breakdown`) powered by Gemini AI that breaks high-level goals into milestone subtasks with time estimates and strategic advice.
+- **Shared Schemas & Models ([packages/types](file:///c:/Users/shadi/Desktop/New%20folder/packages/types) & [packages/database](file:///c:/Users/shadi/Desktop/New%20folder/packages/database))**: Universal Zod contracts, Prisma database models, and repository store.
+
+---
+
 ## Getting Started (When You Are Ready To Install)
 
 1. **Install Dependencies**:

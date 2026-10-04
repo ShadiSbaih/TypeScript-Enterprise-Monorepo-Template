@@ -6,6 +6,7 @@ import swagger from "@fastify/swagger";
 import swaggerUi from "@fastify/swagger-ui";
 import { healthRoutes } from "./routes/health";
 import { userRoutes } from "./routes/users";
+import { taskRoutes } from "./routes/tasks";
 
 export async function buildApp(): Promise<FastifyInstance> {
   const app = Fastify({
@@ -49,6 +50,7 @@ export async function buildApp(): Promise<FastifyInstance> {
   // Application Routes
   await app.register(healthRoutes, { prefix: "/api/health" });
   await app.register(userRoutes, { prefix: "/api/v1/users" });
+  await app.register(taskRoutes, { prefix: "/api/v1/tasks" });
 
   return app;
 }

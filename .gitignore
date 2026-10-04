@@ -1,9 +1,51 @@
+# Dependencies
 node_modules/
+.pnpm-store/
+
+# Production & Build Artifacts
 dist/
 build/
-.env
-.env.local
-.DS_Store
-*.log
-coverage/
+out/
+.next/
+!.next/cache/
+
+# Turborepo
 .turbo/
+
+# Environment Variables & Secrets
+.env
+.env*.local
+!.env.example
+
+# Expo & Mobile
+.expo/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Terraform & Cloud
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# Testing & Coverage
+coverage/
+*.lcov
+.nyc_output/
+
+# Logs & Debugging
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# TypeScript
+*.tsbuildinfo
+
+# OS Specific
+.DS_Store
+Thumbs.db
